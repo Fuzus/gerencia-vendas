@@ -19,7 +19,14 @@ public class OrderProduct implements Serializable {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
-        this.totalPrice = totalPrice;
+        setTotalPrice();
+    }
+
+    public OrderProduct(Product product, Integer quantity) {
+        this.productId = product.getId();
+        this.price = product.getPrice();
+        this.quantity = quantity;
+        setTotalPrice();
     }
 
     public Long getProductId() {
@@ -36,6 +43,7 @@ public class OrderProduct implements Serializable {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+        setTotalPrice();
     }
 
     public BigDecimal getPrice() {
@@ -50,8 +58,8 @@ public class OrderProduct implements Serializable {
         return totalPrice;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+    private void setTotalPrice() {
+        this.totalPrice = this.price.multiply(BigDecimal.valueOf(this.quantity));
     }
 
     @Override

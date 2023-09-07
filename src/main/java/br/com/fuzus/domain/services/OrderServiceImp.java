@@ -1,7 +1,6 @@
 package br.com.fuzus.domain.services;
 
 import br.com.fuzus.domain.dto.OrderDTO;
-import br.com.fuzus.domain.dto.OrderProductDTO;
 import br.com.fuzus.domain.entities.*;
 import br.com.fuzus.domain.ports.in.OrderService;
 import br.com.fuzus.domain.ports.in.ProductService;
@@ -11,6 +10,7 @@ import br.com.fuzus.domain.ports.out.OrderRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderServiceImp implements OrderService {
 
@@ -33,24 +33,37 @@ public class OrderServiceImp implements OrderService {
         orderProduct.setProductId(product.getId());
         orderProduct.setPrice(product.getPrice());
         orderProduct.setQuantity(orderDto.orderProduct().quantity());
-        orderProduct.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(orderDto.orderProduct().quantity())));
 
         Order order = new Order();
         order.setClient(client);
-        order.setDate(LocalDateTime.now());
-        order.setStatus(Status.CREATED);
+        order.setStatus(Status.DRAFT);
         order.getProducts().add(orderProduct);
-        order.setTotal(BigDecimal.valueOf(
-                order.getProducts().stream().map(OrderProduct::getTotalPrice).mapToDouble(BigDecimal::doubleValue
-                ).sum()));
+        order.calculateTotal();
 
         orderRepository.createOrder(order);
     }
 
     @Override
     public void addProduct(OrderDTO orderDto) {
-        Order order = orderRepository.findById(orderDto.id());
+        Order order = findById(orderDto.id());
+        Optional<OrderProduct> orderProduct = order.getProducts().stream().filter(x -> x.getProductId().equals(orderDto.orderProduct().productId())).findAny();
+        if (orderProduct.isPresent()){
+            updateQuantity(orderProduct.get(), orderDto.orderProduct().quantity());
+        } else {
+            addProductToOrder(order, orderDto);
+        }
+        order.calculateTotal();
+        orderRepository.addProduct(order);
+    }
 
+    private void updateQuantity(OrderProduct x, Integer quantity) {
+        x.setQuantity(quantity);
+    }
+
+    private void addProductToOrder(Order order, OrderDTO orderDto) {
+        Product product = productService.findProductById(orderDto.id());
+        OrderProduct orderProduct = new OrderProduct(product, orderDto.orderProduct().quantity());
+        order.getProducts().add(orderProduct);
     }
 
     @Override

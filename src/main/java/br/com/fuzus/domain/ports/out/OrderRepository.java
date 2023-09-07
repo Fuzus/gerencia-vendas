@@ -13,7 +13,7 @@ public interface OrderRepository {
 
     Order findById(Long id);
 
-    Order addProduct(Order order, OrderProduct product);
+    Order addProduct(Order order);
 
     void removeProduct();
 

@@ -15,17 +15,17 @@ public class Order implements Serializable {
     private Status status;
     private final List<OrderProduct> products;
 
-    public Order(){
+    public Order() {
         this.products = new ArrayList<>();
     }
 
-    public Order(Long id, LocalDateTime date, Client client, BigDecimal total, Status status, List<OrderProduct> products) {
+    public Order(Long id, LocalDateTime date, Client client, Status status, List<OrderProduct> products) {
         this.id = id;
         this.date = date;
         this.client = client;
-        this.total = total;
         this.status = status;
         this.products = products;
+        calculateTotal();
     }
 
     public Long getId() {
@@ -56,8 +56,14 @@ public class Order implements Serializable {
         return total;
     }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
+    public void calculateTotal() {
+        this.total = BigDecimal.valueOf(
+                getProducts()
+                        .stream()
+                        .map(OrderProduct::getTotalPrice)
+                        .mapToDouble(BigDecimal::doubleValue)
+                        .sum()
+        );
     }
 
     public Status getStatus() {
