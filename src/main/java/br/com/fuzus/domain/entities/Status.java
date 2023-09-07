@@ -4,6 +4,6 @@ public enum Status {
 
     DRAFT,
     CREATED,
-    CONFIRMED_PAYMENT,
-    REVERSED_PAYMENT;
+    CONFIRMED,
+    REFOUNDED;
 }

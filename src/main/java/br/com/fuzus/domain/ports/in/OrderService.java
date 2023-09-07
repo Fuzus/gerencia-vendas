@@ -16,4 +16,8 @@ public interface OrderService {
 
     Order findById(Long id);
 
+    void openOrder(OrderDTO orderDTO);
+
+    void refoundOrder(OrderDTO orderDTO);
+
 }

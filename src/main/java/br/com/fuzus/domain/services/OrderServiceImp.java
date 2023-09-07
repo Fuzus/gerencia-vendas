@@ -7,8 +7,6 @@ import br.com.fuzus.domain.ports.in.ProductService;
 import br.com.fuzus.domain.ports.out.ClientRepository;
 import br.com.fuzus.domain.ports.out.OrderRepository;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,22 +46,12 @@ public class OrderServiceImp implements OrderService {
         Order order = findById(orderDto.id());
         Optional<OrderProduct> orderProduct = order.getProducts().stream().filter(x -> x.getProductId().equals(orderDto.orderProduct().productId())).findAny();
         if (orderProduct.isPresent()){
-            updateQuantity(orderProduct.get(), orderDto.orderProduct().quantity());
+            orderProduct.get().setQuantity(orderDto.orderProduct().quantity());
         } else {
             addProductToOrder(order, orderDto);
         }
         order.calculateTotal();
         orderRepository.addProduct(order);
-    }
-
-    private void updateQuantity(OrderProduct x, Integer quantity) {
-        x.setQuantity(quantity);
-    }
-
-    private void addProductToOrder(Order order, OrderDTO orderDto) {
-        Product product = productService.findProductById(orderDto.id());
-        OrderProduct orderProduct = new OrderProduct(product, orderDto.orderProduct().quantity());
-        order.getProducts().add(orderProduct);
     }
 
     @Override
@@ -79,5 +67,25 @@ public class OrderServiceImp implements OrderService {
     @Override
     public Order findById(Long id) {
         return orderRepository.findById(id);
+    }
+
+    @Override
+    public void openOrder(OrderDTO orderDTO) {
+        changeOrderStatus(orderDTO.id(), Status.CREATED);
+    }
+
+    @Override
+    public void refoundOrder(OrderDTO orderDTO) {
+        changeOrderStatus(orderDTO.id(), Status.REFOUNDED);
+    }
+
+    private void changeOrderStatus(Long id, Status status) {
+        orderRepository.changeStatus(id, status);
+    }
+
+    private void addProductToOrder(Order order, OrderDTO orderDto) {
+        Product product = productService.findProductById(orderDto.id());
+        OrderProduct orderProduct = new OrderProduct(product, orderDto.orderProduct().quantity());
+        order.getProducts().add(orderProduct);
     }
 }
