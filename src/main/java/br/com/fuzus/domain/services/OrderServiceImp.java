@@ -67,17 +67,17 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public void removeProduct(Long id) {
-
+    public void removeProduct(Long orderId, Long productId) {
+        orderRepository.removeProduct(orderId, productId);
     }
 
     @Override
     public List<Order> listAll() {
-        return null;
+        return orderRepository.findAll();
     }
 
     @Override
     public Order findById(Long id) {
-        return null;
+        return orderRepository.findById(id);
     }
 }

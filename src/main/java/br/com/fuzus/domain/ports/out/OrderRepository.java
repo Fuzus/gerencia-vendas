@@ -15,6 +15,6 @@ public interface OrderRepository {
 
     Order addProduct(Order order);
 
-    void removeProduct();
+    void removeProduct(Long orderId, Long productId);
 
 }

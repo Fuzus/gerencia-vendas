@@ -10,7 +10,7 @@ public interface OrderService {
     void createOrder(OrderDTO orderDto);
 
     void addProduct(OrderDTO OrderDto);
-    void removeProduct(Long id);
+    void removeProduct(Long orderId, Long productId);
 
     List<Order> listAll();
 
