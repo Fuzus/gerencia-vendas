@@ -1,32 +1,22 @@
-package br.com.fuzus.domain.entities;
+package br.com.fuzus.model;
 
-import br.com.fuzus.domain.dto.ProductDTO;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
-public class Product implements Serializable {
+public class Product {
 
     private Long id;
     private String description;
     private BigDecimal price;
     private Integer stock;
 
-    public Product(){}
+    public Product() {
+    }
 
-    public Product(Long id, String description, BigDecimal price, Integer quantity) {
+    public Product(Long id, String description, BigDecimal price, Integer stock) {
         this.id = id;
         this.description = description;
         this.price = price;
-        this.stock = quantity;
-    }
-
-    public  Product(ProductDTO dto) {
-        this.id = dto.id();
-        this.price = dto.price();
-        this.description = dto.description();
-        this.stock = dto.stock();
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -62,15 +52,12 @@ public class Product implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                '}';
     }
 }
