@@ -1,5 +1,6 @@
 package br.com.fuzus;
 
+import br.com.fuzus.view.ClientSelection;
 import br.com.fuzus.view.OrderList;
 import br.com.fuzus.view.ProductList;
 
@@ -17,6 +18,6 @@ public class App
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(512,264);
         frame.setVisible(true);
-        new OrderList(frame);
+        new ClientSelection(frame);
     }
 }
