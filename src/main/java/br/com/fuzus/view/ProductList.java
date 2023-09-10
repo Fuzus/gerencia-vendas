@@ -17,7 +17,7 @@ public class ProductList {
     private JButton nextButton;
     private JTextField quantity;
 
-    private List<Product> products;
+    private final List<Product> products;
 
 
     public ProductList(JFrame frame) {
