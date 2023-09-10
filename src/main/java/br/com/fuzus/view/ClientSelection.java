@@ -1,6 +1,7 @@
 package br.com.fuzus.view;
 
 import br.com.fuzus.model.Client;
+import br.com.fuzus.model.Order;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +18,10 @@ public class ClientSelection {
 
     private final List<Client> clients = new ArrayList<>();
 
-    public ClientSelection(JFrame frame) {
+    private Order order;
+
+    public ClientSelection(JFrame frame, Order order) {
+        this.order = order;
         frame.setContentPane(mainPanel);
         clientTable.setModel(new DefaultTableModel(new Object[][]{}, new String[] {"Nome"}));
         getClients();
@@ -47,10 +51,15 @@ public class ClientSelection {
             }
         });
         selectButton.addActionListener(e -> {
-            //TODO: Adcionar o cliente ao pedido
+            var index = clientTable.getSelectedRow();
+            order.setClient(clients.get(index));
         });
         continueButton.addActionListener(e -> {
-            //TODO: TELA DE DETALHES DO PEDIDO
+            JFrame frame = new JFrame("Detalhes do pedido");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(512, 256);
+            frame.setVisible(true);
+            new OrderDetails(frame, order);
         });
     }
 }

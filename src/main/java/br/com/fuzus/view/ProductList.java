@@ -1,11 +1,14 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.model.Order;
 import br.com.fuzus.model.OrderProduct;
 import br.com.fuzus.model.Product;
+import br.com.fuzus.model.Status;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,8 +19,9 @@ public class ProductList {
     private JButton buyButton;
     private JButton nextButton;
     private JTextField quantity;
-
     private final List<Product> products;
+    private final List<OrderProduct> orderProducts = new ArrayList<>();
+    private Order order;
 
 
     public ProductList(JFrame frame) {
@@ -52,12 +56,16 @@ public class ProductList {
             int index = productsTable.getSelectedRow();
             Product product = products.get(index);
             Integer quantityInt = Integer.valueOf(quantity.getText());
-            OrderProduct orderProduct = new OrderProduct(product, quantityInt);
-            System.out.println(orderProduct);
-            //TODO: Criar Order e mandar para la os produtos que forem adicionados
+            orderProducts.add(new OrderProduct(product, quantityInt));
         });
         nextButton.addActionListener(e -> {
-            //TODO: Criar tela de colocar nome do cliente
+            order = new Order(null, LocalDateTime.now(), null, null, Status.DRAFT);
+            order.getPurchasedProducts().addAll(orderProducts);
+            JFrame frame = new JFrame("Selecionar Cliente");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(512,264);
+            frame.setVisible(true);
+            new ClientSelection(frame, order);
         });
     }
 }

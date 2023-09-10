@@ -24,29 +24,33 @@ public class OrderDetails {
     private JButton refundOderButton;
     private Order order;
 
-    public OrderDetails(JFrame frame) {
+    public OrderDetails(JFrame frame, Order order) {
         frame.setContentPane(mainPanel);
-        orderTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
+        this.orderTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
                 "Descricao",
                 "Quantidade",
                 "preco",
                 "valor total"
         }));
-        order = getOrder();
-        orderDate.setText(order.getDate().format(
+        if (order == null){
+           this.order = getOrder();
+        } else {
+            this.order = order;
+        }
+        this.orderDate.setText(this.order.getDate().format(
                 new DateTimeFormatterBuilder()
                         .appendPattern("dd/MM/yyyy HH:mm:ss")
                         .toFormatter()));
-        totalValue.setText("R$" + order.getTotalValue());
-        clientName.setText(order.getClient().getName());
-        statusLbl.setText(order.getStatus().name());
-        populateTable(order.getPurchasedProducts());
-        setButtonsEnabled();
-        setListeners();
+        this.totalValue.setText("R$" + this.order.getTotalValue());
+        this.clientName.setText(this.order.getClient().getName());
+        this.statusLbl.setText(this.order.getStatus().name());
+        this.populateTable(this.order.getPurchasedProducts());
+        this.setButtonsEnabled();
+        this.setListeners();
     }
 
     private void setButtonsEnabled() {
-        switch (order.getStatus()) {
+        switch (this.order.getStatus()) {
             case DRAFT -> {
                 refundOderButton.setEnabled(false);
                 confirmOrderButton.setEnabled(true);
@@ -63,7 +67,7 @@ public class OrderDetails {
     }
 
     private void populateTable(List<OrderProduct> purchasedProducts) {
-        DefaultTableModel model = (DefaultTableModel) orderTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) this.orderTable.getModel();
         for (OrderProduct product : purchasedProducts){
             model.addRow(new String[]{
                     product.getProductDescription(),
@@ -89,17 +93,18 @@ public class OrderDetails {
     }
 
     private void setListeners() {
-        confirmOrderButton.addActionListener(e -> {
+        this.confirmOrderButton.addActionListener(e -> {
             changeStatus(Status.CONFIRMED);
+            order.setDate(LocalDateTime.now());
         });
-        refundOderButton.addActionListener(e -> {
+        this.refundOderButton.addActionListener(e -> {
             changeStatus(Status.REFUNDED);
         });
     }
 
     private void changeStatus(Status status) {
-        order.setStatus(status);
-        statusLbl.setText(status.name());
-        setButtonsEnabled();
+        this.order.setStatus(status);
+        this.statusLbl.setText(status.name());
+        this.setButtonsEnabled();
     }
 }

@@ -19,6 +19,6 @@ public class App
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(512,264);
         frame.setVisible(true);
-        new OrderDetails(frame);
+        new ProductList(frame);
     }
 }

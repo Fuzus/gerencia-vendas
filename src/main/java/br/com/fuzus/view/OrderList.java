@@ -6,14 +6,11 @@ import br.com.fuzus.model.Status;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class OrderList {
     private JTable orderTable;
