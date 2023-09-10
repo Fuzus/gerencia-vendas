@@ -2,6 +2,7 @@ package br.com.fuzus.view;
 
 import br.com.fuzus.model.Client;
 import br.com.fuzus.model.Order;
+import br.com.fuzus.view.util.CreateFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -55,11 +56,7 @@ public class ClientSelection {
             order.setClient(clients.get(index));
         });
         continueButton.addActionListener(e -> {
-            JFrame frame = new JFrame("Detalhes do pedido");
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(512, 256);
-            frame.setVisible(true);
-            new OrderDetails(frame, order);
+            new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), order);
         });
     }
 }

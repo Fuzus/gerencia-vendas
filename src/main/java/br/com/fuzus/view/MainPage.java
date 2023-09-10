@@ -1,5 +1,7 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.view.util.CreateFrame;
+
 import javax.swing.*;
 
 public class MainPage {
@@ -13,20 +15,12 @@ public class MainPage {
         setListeners();
     }
 
-    public void setListeners(){
+    public void setListeners() {
         buyButton.addActionListener(e -> {
-            new ProductList(createJframe());
+            new ProductList(CreateFrame.create("Lista de produtos", JFrame.DISPOSE_ON_CLOSE));
         });
         listOrderButton.addActionListener(e -> {
-            new OrderList(createJframe());
+            new OrderList(CreateFrame.create("Lista de pedidos", JFrame.DISPOSE_ON_CLOSE));
         });
-    }
-
-    private JFrame createJframe() {
-        final JFrame frame = new JFrame("Lista de produtos");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(512, 256);
-        frame.setVisible(true);
-        return frame;
     }
 }

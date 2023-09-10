@@ -3,6 +3,7 @@ package br.com.fuzus.view;
 import br.com.fuzus.model.Client;
 import br.com.fuzus.model.Order;
 import br.com.fuzus.model.Status;
+import br.com.fuzus.view.util.CreateFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -29,6 +30,7 @@ public class OrderList {
         }));
         orders = getOrders();
         populateTable(orders);
+        setListeners();
     }
 
     private void populateTable(List<Order> orders) {
@@ -53,7 +55,7 @@ public class OrderList {
             Long id = Long.parseLong((String) model.getValueAt(index, 0));
             var order = orders.stream().filter(x -> x.getId().equals(id)).findFirst();
             if (order.isPresent()) {
-                //TODO: criar tela de detalhes
+                new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), order.get());
             }
         });
     }

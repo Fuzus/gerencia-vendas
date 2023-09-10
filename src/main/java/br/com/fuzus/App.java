@@ -1,5 +1,6 @@
 package br.com.fuzus;
 
+import br.com.fuzus.view.util.CreateFrame;
 import br.com.fuzus.view.*;
 
 import javax.swing.*;
@@ -12,10 +13,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        JFrame frame = new JFrame("Gerencias de Vendas");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(512,264);
-        frame.setVisible(true);
-        new MainPage(frame);
+        new MainPage(CreateFrame.create("Gerencias de Vendas", JFrame.EXIT_ON_CLOSE));
     }
 }

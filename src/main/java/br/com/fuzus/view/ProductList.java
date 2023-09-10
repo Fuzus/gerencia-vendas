@@ -4,6 +4,7 @@ import br.com.fuzus.model.Order;
 import br.com.fuzus.model.OrderProduct;
 import br.com.fuzus.model.Product;
 import br.com.fuzus.model.Status;
+import br.com.fuzus.view.util.CreateFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -61,11 +62,7 @@ public class ProductList {
         nextButton.addActionListener(e -> {
             order = new Order(null, LocalDateTime.now(), null, null, Status.DRAFT);
             order.getPurchasedProducts().addAll(orderProducts);
-            JFrame frame = new JFrame("Selecionar Cliente");
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(512,264);
-            frame.setVisible(true);
-            new ClientSelection(frame, order);
+            new ClientSelection(CreateFrame.create("Selecionar Cliente", JFrame.DISPOSE_ON_CLOSE), order);
         });
     }
 }
