@@ -54,9 +54,7 @@ public class OrderList {
             DefaultTableModel model = (DefaultTableModel) orderTable.getModel();
             Long id = Long.parseLong((String) model.getValueAt(index, 0));
             var order = orders.stream().filter(x -> x.getId().equals(id)).findFirst();
-            if (order.isPresent()) {
-                new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), order.get());
-            }
+            order.ifPresent(value -> new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), value));
         });
     }
 
