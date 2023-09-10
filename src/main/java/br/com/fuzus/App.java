@@ -1,9 +1,6 @@
 package br.com.fuzus;
 
-import br.com.fuzus.view.ClientSelection;
-import br.com.fuzus.view.OrderDetails;
-import br.com.fuzus.view.OrderList;
-import br.com.fuzus.view.ProductList;
+import br.com.fuzus.view.*;
 
 import javax.swing.*;
 
@@ -19,6 +16,6 @@ public class App
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(512,264);
         frame.setVisible(true);
-        new ProductList(frame);
+        new MainPage(frame);
     }
 }
