@@ -19,7 +19,9 @@ public class OrderDetails {
     private JLabel orderDate;
     private JLabel totalValue;
     private JLabel clientName;
-    private JLabel status;
+    private JLabel statusLbl;
+    private JButton confirmOrderButton;
+    private JButton refundOderButton;
     private Order order;
 
     public OrderDetails(JFrame frame) {
@@ -37,8 +39,27 @@ public class OrderDetails {
                         .toFormatter()));
         totalValue.setText("R$" + order.getTotalValue());
         clientName.setText(order.getClient().getName());
-        status.setText(order.getStatus().name());
+        statusLbl.setText(order.getStatus().name());
         populateTable(order.getPurchasedProducts());
+        setButtonsEnabled();
+        setListeners();
+    }
+
+    private void setButtonsEnabled() {
+        switch (order.getStatus()) {
+            case DRAFT -> {
+                refundOderButton.setEnabled(false);
+                confirmOrderButton.setEnabled(true);
+            }
+            case CONFIRMED -> {
+                confirmOrderButton.setEnabled(false);
+                refundOderButton.setEnabled(true);
+            }
+            default -> {
+                confirmOrderButton.setEnabled(false);
+                refundOderButton.setEnabled(false);
+            }
+        }
     }
 
     private void populateTable(List<OrderProduct> purchasedProducts) {
@@ -59,11 +80,26 @@ public class OrderDetails {
                 LocalDateTime.now(),
                 new Client(1L, "Gabriel"),
                 new BigDecimal(550),
-                Status.CONFIRMED,
+                Status.DRAFT,
                 Arrays.asList(
                         new OrderProduct(1L, "Teste", 50, new BigDecimal("35.15")),
                         new OrderProduct(2L, "teste2", 44, new BigDecimal("55.99"))
                 )
         );
+    }
+
+    private void setListeners() {
+        confirmOrderButton.addActionListener(e -> {
+            changeStatus(Status.CONFIRMED);
+        });
+        refundOderButton.addActionListener(e -> {
+            changeStatus(Status.REFUNDED);
+        });
+    }
+
+    private void changeStatus(Status status) {
+        order.setStatus(status);
+        statusLbl.setText(status.name());
+        setButtonsEnabled();
     }
 }
