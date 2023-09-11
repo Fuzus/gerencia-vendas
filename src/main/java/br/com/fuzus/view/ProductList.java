@@ -59,6 +59,10 @@ public class ProductList {
     private void setListeners() {
         buyButton.addActionListener(e -> {
             int index = productsTable.getSelectedRow();
+            if (index < 0) {
+                JOptionPane.showMessageDialog(null, "Selecione um produto");
+                return;
+            }
             Product product = products.get(index);
             int quantityInt = Integer.parseInt(quantity.getText());
             if (quantityInt < 1){

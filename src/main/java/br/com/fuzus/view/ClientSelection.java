@@ -56,11 +56,18 @@ public class ClientSelection {
             if(inputNovoClient.getText() != null && !inputNovoClient.getText().isEmpty()) {
                 clientService.createClient(inputNovoClient.getText());
                 getClients();
+                JOptionPane.showMessageDialog(null, "Cliente criado com sucesso!");
+                inputNovoClient.setText("");
             }
         });
         selectButton.addActionListener(e -> {
             var index = clientTable.getSelectedRow();
+            if (index < 0) {
+                JOptionPane.showMessageDialog(null, "Selecione um cliente da lista");
+                return;
+            }
             order = orderService.createOrder(clients.get(index));
+            JOptionPane.showMessageDialog(null, String.format("Cliente %s selecionado", clients.get(index).getName()));
         });
         continueButton.addActionListener(e -> {
             if (order.getClient() == null || order.getClient().getName().isEmpty()){
