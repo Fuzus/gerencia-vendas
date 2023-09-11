@@ -75,17 +75,15 @@ public class ProductDAO {
         }
     }
 
-    public boolean changeStock(Product product) {
-        boolean result;
+    public void changeStock(Product product) {
         String updateQuery = properties.getProperty("product.sql.updateStock");
         conn = DbConnection.getInstance();
         try {
             conn.createStatement(updateQuery);
             conn.getStatement().setInt(1, product.getStock());
             conn.getStatement().setLong(2, product.getId());
-            result = conn.getStatement().executeUpdate() > 0;
+            conn.getStatement().executeUpdate();
             DbConnection.closeInstance();
-            return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
