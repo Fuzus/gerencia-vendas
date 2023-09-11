@@ -1,5 +1,6 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.controller.services.OrderService;
 import br.com.fuzus.model.Client;
 import br.com.fuzus.model.Order;
 import br.com.fuzus.model.OrderProduct;
@@ -22,9 +23,12 @@ public class OrderDetails {
     private JLabel statusLbl;
     private JButton confirmOrderButton;
     private JButton refundOderButton;
+    private final OrderService orderService;
     private Order order;
 
-    public OrderDetails(JFrame frame, Order order) {
+    public OrderDetails(JFrame frame, OrderService orderService, Order order) {
+        this.orderService = orderService;
+        this.order = order;
         frame.setContentPane(mainPanel);
         this.orderTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
                 "Descricao",
@@ -32,7 +36,7 @@ public class OrderDetails {
                 "preco",
                 "valor total"
         }));
-        if (order == null){
+        if (order.getPurchasedProducts().isEmpty()){
            this.order = getOrder();
         } else {
             this.order = order;
@@ -79,25 +83,16 @@ public class OrderDetails {
     }
 
     private Order getOrder() {
-        return order = new Order(
-                1L,
-                LocalDateTime.now(),
-                new Client(1L, "Gabriel"),
-                new BigDecimal(550),
-                Status.DRAFT,
-                Arrays.asList(
-                        new OrderProduct(1L, "Teste", 50, new BigDecimal("35.15")),
-                        new OrderProduct(2L, "teste2", 44, new BigDecimal("55.99"))
-                )
-        );
+        return this.orderService.detailOrder(order.getId());
     }
 
     private void setListeners() {
         this.confirmOrderButton.addActionListener(e -> {
+            this.orderService.confirmOrder(order.getId());
             changeStatus(Status.CONFIRMED);
-            order.setDate(LocalDateTime.now());
         });
         this.refundOderButton.addActionListener(e -> {
+            this.orderService.refundOrder(order.getId());
             changeStatus(Status.REFUNDED);
         });
     }

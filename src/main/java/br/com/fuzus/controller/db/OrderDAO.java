@@ -6,6 +6,7 @@ import br.com.fuzus.model.OrderProduct;
 import br.com.fuzus.model.Status;
 import br.com.fuzus.utlis.PropertiesUtils;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,9 +28,9 @@ public class OrderDAO {
             conn.createStatement(properties.getProperty("order.sql.getAll"));
             while (conn.getResultSet().next()){
                 orders.add(new Order(
-                        conn.getResultSet().getLong("p.id"),
+                        conn.getResultSet().getLong("id"),
                         conn.getResultSet().getTimestamp("date").toLocalDateTime(),
-                        new Client(conn.getResultSet().getLong("c.id"), conn.getResultSet().getString("name")),
+                        new Client(conn.getResultSet().getLong("client_id"), conn.getResultSet().getString("name")),
                         conn.getResultSet().getBigDecimal("total_value"),
                         Status.valueOf(conn.getResultSet().getString("status"))
                 ));
@@ -49,26 +50,28 @@ public class OrderDAO {
             conn.getStatement().setLong(1, id);
             if (conn.getResultSet().next()){
                 order = new Order(
-                        conn.getResultSet().getLong("p.id"),
+                        conn.getResultSet().getLong("id"),
                         conn.getResultSet().getTimestamp("date").toLocalDateTime(),
-                        new Client(conn.getResultSet().getLong("c.id"), conn.getResultSet().getString("name")),
+                        new Client(conn.getResultSet().getLong("client_id"), conn.getResultSet().getString("name")),
                         conn.getResultSet().getBigDecimal("total_value"),
                         Status.valueOf(conn.getResultSet().getString("status"))
                 );
-                order.setPurchasedProducts(getOrderProducts(id));
 
             }
             DbConnection.closeInstance();
+            if (order != null) {
+                order.setPurchasedProducts(getOrderProducts(id));
+            }
             return order;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean createOrder(Order order) {
-        insertOrder(order);
-        insertOrderProducts(order.getId(), order.getPurchasedProducts());
-        return true;
+    public Long createOrder(Order order) {
+        var generatedId = insertOrder(order);
+        insertOrderProducts(generatedId, order.getPurchasedProducts());
+        return generatedId;
     }
 
     public boolean updateStatus(Long id, Status status){
@@ -106,7 +109,8 @@ public class OrderDAO {
         }
     }
 
-    private void insertOrder(Order order) {
+    private Long insertOrder(Order order) {
+        var generatedId = 0L;
         String query = properties.getProperty("order.sql.insertOrder");
         conn = DbConnection.getInstance();
         try {
@@ -116,7 +120,12 @@ public class OrderDAO {
             conn.getStatement().setBigDecimal(3, order.getTotalValue());
             conn.getStatement().setString(4, order.getStatus().name());
             conn.getStatement().executeUpdate();
+            ResultSet rs = conn.getStatement().getGeneratedKeys();
+            if (rs.next()) {
+                generatedId = rs.getInt("id");
+            }
             DbConnection.closeInstance();
+            return generatedId;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -128,7 +137,7 @@ public class OrderDAO {
         try {
             conn.createStatement(properties.getProperty("order.sql.getOrderProducts"));
             conn.getStatement().setLong(1, id);
-            if (conn.getResultSet().next()){
+            while (conn.getResultSet().next()){
                 orderProducts.add(new OrderProduct(
                         conn.getResultSet().getLong("product_id"),
                         conn.getResultSet().getString("product_description"),

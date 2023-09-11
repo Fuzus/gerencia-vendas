@@ -42,4 +42,5 @@ create table if not exists produtos_pedido(
 
 insert into produtos(description, price, stock) VALUES ('Iphone 12', 4999.99, 100);
 insert into produtos(description, price, stock) VALUES ('Iphone 13', 5999.99, 120);
-insert into produtos(description, price, stock) VALUES ('Tv Smart 65 poleagas', 3000, 50);
+insert into produtos(description, price, stock) VALUES ('Tv Smart 65', 3000, 50);
+insert into produtos(description, price, stock) VALUES ('Garrafa termica', 15.50, 300);

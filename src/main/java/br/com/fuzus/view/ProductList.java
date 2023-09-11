@@ -1,5 +1,9 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.controller.services.OrderService;
+import br.com.fuzus.controller.services.ProductService;
+import br.com.fuzus.controller.services.imp.OrderServiceImp;
+import br.com.fuzus.controller.services.imp.ProductServiceImp;
 import br.com.fuzus.model.Order;
 import br.com.fuzus.model.OrderProduct;
 import br.com.fuzus.model.Product;
@@ -22,10 +26,13 @@ public class ProductList {
     private JTextField quantity;
     private final List<Product> products;
     private final List<OrderProduct> orderProducts = new ArrayList<>();
-    private Order order;
+    private final OrderService orderService;
+    private final ProductService productService;
 
 
-    public ProductList(JFrame frame) {
+    public ProductList(JFrame frame, ProductService productService, OrderService orderService) {
+        this.productService = productService;
+        this.orderService = orderService;
         frame.setContentPane(panelMain);
         productsTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{"Produto", "Preço", "Stock"}));
         products = getProducts();
@@ -46,23 +53,23 @@ public class ProductList {
     }
 
     private List<Product> getProducts() {
-        Product product1 = new Product(1L, "description", new BigDecimal(10), 5);
-        Product product2 = new Product(2L, "description2", new BigDecimal("10.53"), 10);
-        Product product3 = new Product(2L, "description2", new BigDecimal("10.53"), 10);
-        return new ArrayList<>(Arrays.asList(product1, product2, product3, product3, product3, product3, product3));
+        return this.productService.getProducts();
     }
 
     private void setListeners() {
         buyButton.addActionListener(e -> {
             int index = productsTable.getSelectedRow();
             Product product = products.get(index);
-            Integer quantityInt = Integer.valueOf(quantity.getText());
-            orderProducts.add(new OrderProduct(product, quantityInt));
+            int quantityInt = Integer.parseInt(quantity.getText());
+            if (quantityInt < 1){
+                JOptionPane.showMessageDialog(null, "Selecione uma quantidade valida");
+                return;
+            }
+            this.orderService.addProduct(new OrderProduct(product, quantityInt));
+            JOptionPane.showMessageDialog(null, "Produto adcionado com sucesso!");
         });
         nextButton.addActionListener(e -> {
-            order = new Order(null, LocalDateTime.now(), null, null, Status.DRAFT);
-            order.getPurchasedProducts().addAll(orderProducts);
-            new ClientSelection(CreateFrame.create("Selecionar Cliente", JFrame.DISPOSE_ON_CLOSE), order);
+            new ClientSelection(CreateFrame.create("Selecionar Cliente", JFrame.DISPOSE_ON_CLOSE), this.orderService);
         });
     }
 }

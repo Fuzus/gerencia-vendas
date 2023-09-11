@@ -33,7 +33,7 @@ public class DbConnection {
         if (query == null) {
             throw new RuntimeException("Query não pode ser null");
         }
-        stmt = conn.prepareStatement(query);
+        stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
     }
 
     public PreparedStatement getStatement() {

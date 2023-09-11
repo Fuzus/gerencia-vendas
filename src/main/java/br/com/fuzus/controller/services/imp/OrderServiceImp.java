@@ -36,13 +36,15 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public void createOrder(Client client) {
+    public Order createOrder(Client client) {
         order.setDate(LocalDateTime.now());
         order.setClient(client);
         order.setStatus(Status.DRAFT);
         var totalPrice = order.getPurchasedProducts().stream().map(OrderProduct::getTotal).mapToDouble(BigDecimal::doubleValue).sum();
         order.setTotalValue(BigDecimal.valueOf(totalPrice));
-        orderDAO.createOrder(order);
+        var id = orderDAO.createOrder(order);
+        order.setId(id);
+        return order;
     }
 
     @Override

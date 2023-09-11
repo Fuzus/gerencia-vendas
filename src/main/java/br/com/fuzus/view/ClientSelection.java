@@ -1,12 +1,14 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.controller.services.ClientService;
+import br.com.fuzus.controller.services.OrderService;
+import br.com.fuzus.controller.services.imp.ClientServiceImp;
 import br.com.fuzus.model.Client;
 import br.com.fuzus.model.Order;
 import br.com.fuzus.view.util.CreateFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClientSelection {
@@ -17,12 +19,16 @@ public class ClientSelection {
     private JButton includeClientButton;
     private JButton continueButton;
 
-    private final List<Client> clients = new ArrayList<>();
+    private List<Client> clients;
 
     private Order order;
 
-    public ClientSelection(JFrame frame, Order order) {
-        this.order = order;
+    private final OrderService orderService;
+    private final ClientService clientService;
+
+    public ClientSelection(JFrame frame, OrderService order) {
+        this.orderService = order;
+        this.clientService = new ClientServiceImp();
         frame.setContentPane(mainPanel);
         clientTable.setModel(new DefaultTableModel(new Object[][]{}, new String[] {"Nome"}));
         getClients();
@@ -41,22 +47,27 @@ public class ClientSelection {
     }
 
     private void getClients() {
-        clients.add(new Client(1L, "Matheus"));
+        clients = clientService.getAll();
+        populateTable(clients);
     }
 
     private void setListeners(){
         includeClientButton.addActionListener(e -> {
             if(inputNovoClient.getText() != null && !inputNovoClient.getText().isEmpty()) {
-                clients.add(new Client((long) (clients.size() + 1), inputNovoClient.getText()));
-                populateTable(clients);
+                clientService.createClient(inputNovoClient.getText());
+                getClients();
             }
         });
         selectButton.addActionListener(e -> {
             var index = clientTable.getSelectedRow();
-            order.setClient(clients.get(index));
+            order = orderService.createOrder(clients.get(index));
         });
         continueButton.addActionListener(e -> {
-            new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), order);
+            if (order.getClient() == null || order.getClient().getName().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Selecione um Cliente");
+                return;
+            }
+            new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), orderService, order);
         });
     }
 }

@@ -29,6 +29,7 @@ public class ClientDAO {
                         conn.getResultSet().getString("name")
                 ));
             }
+            DbConnection.closeInstance();
             return clients;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -40,8 +41,9 @@ public class ClientDAO {
 
         try {
             conn.createStatement(properties.getProperty("client.sql.insert"));
-            conn.getStatement().setString(0, client.getName());
+            conn.getStatement().setString(1, client.getName());
             conn.getStatement().executeUpdate();
+            DbConnection.closeInstance();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

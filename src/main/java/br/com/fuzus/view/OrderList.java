@@ -1,5 +1,6 @@
 package br.com.fuzus.view;
 
+import br.com.fuzus.controller.services.OrderService;
 import br.com.fuzus.model.Client;
 import br.com.fuzus.model.Order;
 import br.com.fuzus.model.Status;
@@ -20,7 +21,10 @@ public class OrderList {
 
     private final List<Order> orders;
 
-    public OrderList(JFrame frame) {
+    private final OrderService orderService;
+
+    public OrderList(JFrame frame, OrderService orderService) {
+        this.orderService = orderService;
         frame.setContentPane(mainPanel);
         orderTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
                 "Id",
@@ -54,11 +58,11 @@ public class OrderList {
             DefaultTableModel model = (DefaultTableModel) orderTable.getModel();
             Long id = Long.parseLong((String) model.getValueAt(index, 0));
             var order = orders.stream().filter(x -> x.getId().equals(id)).findFirst();
-            order.ifPresent(value -> new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), value));
+            order.ifPresent(value -> new OrderDetails(CreateFrame.create("Detalhes do pedido", JFrame.DISPOSE_ON_CLOSE), orderService, value));
         });
     }
 
     private List<Order> getOrders() {
-        return Arrays.asList(new Order(1L, LocalDateTime.now(), new Client(1L, "Gabriel"),new BigDecimal(550), Status.DRAFT));
+        return orderService.getAllOrders();
     }
 }
